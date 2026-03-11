@@ -115,7 +115,7 @@ def cosine_similarity(a: List[float], b: List[float]) -> float:
 def extract_text_from_pdf(pdf_bytes: bytes) -> List[Dict[str, Any]]:
     """从PDF提取文本和图片"""
     chunks = []
-    doc = fitz.open(stream=pdf_bytes, doc_type="pdf")
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
 
     for page_num in range(len(doc)):
         page = doc[page_num]
@@ -439,4 +439,5 @@ def main():
     render_chat_interface()
 
 if __name__ == "__main__":
+
     main()
