@@ -105,11 +105,14 @@ def get_embedding(text: str, model) -> List[float]:
     """获取文本的embedding向量"""
     return model.encode(text, convert_to_numpy=True).tolist()
 
-def cosine_similarity(a: List[float], b: List[float]) -> float:
-    """计算余弦相似度"""
-    a = np.array(a)
-    b = np.array(b)
-    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+def cosine_similarity(a, b):
+    # 确保输入是数值类型
+    try:
+        a = np.array([float(x) for x in a])
+        b = np.array([float(x) for x in b])
+        return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+    except:
+        return 0.0
 
 # ==================== PDF处理 ====================
 def extract_text_from_pdf(pdf_bytes: bytes) -> List[Dict[str, Any]]:
@@ -441,3 +444,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
