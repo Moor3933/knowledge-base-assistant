@@ -188,23 +188,21 @@ def understand_image_with_ai(image_base64: str, client: httpx.Client) -> str:
     except Exception as e:
         return f"图片理解出错: {str(e)}"
 
-def chat_with_ai(query: str, context: str, client: httpx.Client) -> str:
+def chat_with_ai(query, context, client):
     """使用AI进行问答"""
     try:
-        system_prompt = f"""你是一个知识渊博的助手，负责根据提供的知识库内容回答用户的问题。
+        system_prompt = f"""你是一个知识渊博的助手，根据知识库内容回答问题。要求：
+1. 只根据上下文回答
+2. 如果没有相关信息如实说明
+3. 回答要清晰准确
 
-要求：
-1. 只根据提供的上下文信息回答
-2. 如果上下文中没有相关信息，请如实说明
-3. 回答要清晰、准确、简洁
-
-参考知识库内容：
+参考内容：
 {context}
 
 请根据以上知识库内容回答用户的问题。"""
 
         payload = {
-            "model": "deepseek-ai/DeepSeek-R1",
+            "model": "Qwen/Qwen2.5-7B-Instruct",
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": query}
@@ -212,11 +210,14 @@ def chat_with_ai(query: str, context: str, client: httpx.Client) -> str:
             "max_tokens": 2000,
             "temperature": 0.7
         }
+        
         response = client.post("/chat/completions", json=payload)
         result = response.json()
+        
         if "choices" in result and len(result["choices"]) > 0:
             return result["choices"][0]["message"]["content"]
-        return "生成回答失败"
+        else:
+            return f"生成回答失败: {result}"
     except Exception as e:
         return f"AI生成回答出错: {str(e)}"
 # ==================== 数据库操作 ====================
@@ -444,4 +445,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
